@@ -147,6 +147,12 @@ footer{background:#fff;border-top:1px solid #e5e0d8;padding:22px 48px;display:fl
   footer{flex-direction:column;gap:12px;padding:20px;text-align:center}
   .langbar{padding:0 24px}
 }
+.showcase-stack{display:flex;flex-direction:column;align-items:center;gap:15vh;padding:10vh 20px;width:100%;max-width:900px;margin:0 auto}
+.showcase-item{width:100%;height:80vh;position:relative;border-radius:24px;overflow:hidden;will-change:transform,opacity,filter;transform:scale(0.85);opacity:0.4;filter:blur(10px);transition:transform 0.8s cubic-bezier(0.2,0.8,0.2,1),opacity 0.8s cubic-bezier(0.2,0.8,0.2,1),filter 0.8s cubic-bezier(0.2,0.8,0.2,1);box-shadow:0 20px 40px rgba(0,0,0,0.4);cursor:pointer}
+.showcase-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease}
+.showcase-item:hover img{transform:scale(1.03)}
+.showcase-item.in-focus{transform:scale(1);opacity:1;filter:blur(0px)}
+@media (max-width:768px){.showcase-item{height:60vh;border-radius:16px}}
 </style>
 </head>
 <body>
@@ -215,7 +221,7 @@ footer{background:#fff;border-top:1px solid #e5e0d8;padding:22px 48px;display:fl
     <h2 class="team-ttl" id="teamTtl"></h2>
     <p class="team-txt" id="teamTxt"></p>
   </div>
-  <div class="cine-grid" id="cineGrid"></div>
+  <div class="showcase-stack" id="showcaseStack"></div>
 </section>
 
 <section id="testimonials">
@@ -258,14 +264,10 @@ footer{background:#fff;border-top:1px solid #e5e0d8;padding:22px 48px;display:fl
 const GL="https://your-smart-gallery.vercel.app/login";
 const CT={email:"hello@photoambient.com",phone:"+1 (646) 836-4708",whatsapp:"+1 (646) 836-4708",location:"Philadelphia, PA"};
 const GAL=[
-  {img:"https://picsum.photos/seed/g1/800/600",cat:{en:"Corporate",pt:"Corporativo",es:"Corporativo",fr:"Corporate"},title:{en:"Annual Conference",pt:"Conferencia Anual",es:"Conferencia Anual",fr:"Conference Annuelle"}},
-  {img:"https://picsum.photos/seed/g2/800/600",cat:{en:"Portrait",pt:"Retrato",es:"Retrato",fr:"Portrait"},title:{en:"Studio Session",pt:"Sessao Estudio",es:"Sesion Estudio",fr:"Seance Studio"}},
-  {img:"https://picsum.photos/seed/g3/800/600",cat:{en:"Sports",pt:"Esportes",es:"Deportes",fr:"Sports"},title:{en:"Delaware Hockey",pt:"Hockey Delaware",es:"Hockey Delaware",fr:"Hockey Delaware"}},
-  {img:"https://picsum.photos/seed/g4/800/600",cat:{en:"Graduation",pt:"Formatura",es:"Graduacion",fr:"Remise Diplome"},title:{en:"Graduation Day",pt:"Dia da Formatura",es:"Dia de Graduacion",fr:"Jour de Remise"}},
-  {img:"https://picsum.photos/seed/g5/800/600",cat:{en:"Weddings",pt:"Casamentos",es:"Bodas",fr:"Mariages"},title:{en:"Celebration",pt:"Celebracao",es:"Celebracion",fr:"Celebration"}},
-  {img:"https://picsum.photos/seed/g6/800/600",cat:{en:"Maternity",pt:"Gestante",es:"Gestante",fr:"Maternite"},title:{en:"Maternity Session",pt:"Ensaio Gestante",es:"Sesion Gestante",fr:"Seance Maternite"}},
-  {img:"https://picsum.photos/seed/g7/800/600",cat:{en:"Kids Graduation",pt:"Formatura Infantil",es:"Graduacion Infantil",fr:"Remise Enfants"},title:{en:"Little Graduates",pt:"Pequenos Formandos",es:"Pequenos Graduados",fr:"Petits Diplomes"}},
-  {img:"https://picsum.photos/seed/g8/800/600",cat:{en:"Commercial",pt:"Comercial",es:"Comercial",fr:"Commercial"},title:{en:"Brand Campaign",pt:"Campanha de Marca",es:"Campana de Marca",fr:"Campagne Marque"}}
+  {img:"assets/portfolio/1.jpg",cat:{en:"Portrait",pt:"Retrato",es:"Retrato",fr:"Portrait"},title:{en:"Ballet",pt:"Ballet",es:"Ballet",fr:"Ballet"}},
+  {img:"assets/portfolio/2.jpg",cat:{en:"Performance",pt:"Espetáculo",es:"Espectáculo",fr:"Spectacle"},title:{en:"Recital",pt:"Recital",es:"Recital",fr:"Récital"}},
+  {img:"assets/portfolio/3.jpg",cat:{en:"Music",pt:"Música",es:"Música",fr:"Musique"},title:{en:"Piano",pt:"Piano",es:"Piano",fr:"Piano"}},
+  {img:"assets/portfolio/4.jpg",cat:{en:"Dance",pt:"Dança",es:"Danza",fr:"Danse"},title:{en:"Movement",pt:"Movimento",es:"Movimiento",fr:"Mouvement"}}
 ];
 const TST=[
   {name:"Marina Oliveira",role:{en:"Brand Director",pt:"Diretora de Marca",es:"Directora de Marca",fr:"Directrice de Marque"},text:{en:"PhotoAmbient does not just take photos. They build visual worlds.",pt:"A PhotoAmbient nao apenas fotografa. Constroem mundos visuais.",es:"PhotoAmbient no solo toma fotos. Construyen mundos visuales.",fr:"PhotoAmbient ne fait pas que photographier."},img:"https://i.pravatar.cc/200?img=47"},
@@ -365,13 +367,27 @@ function renderAll(){
   document.getElementById("teamLbl").textContent=t.teamLbl;
   document.getElementById("teamTtl").innerHTML=t.teamTtl;
   document.getElementById("teamTxt").textContent=t.teamTxt;
-  const cg=document.getElementById("cineGrid");cg.innerHTML="";
+  const ss=document.getElementById("showcaseStack");ss.innerHTML="";
   GAL.forEach((item,i)=>{
-    const el=document.createElement("div");el.className="cg";
+    const el=document.createElement("div");el.className="showcase-item";
     const cat=item.cat[lang]||item.cat.en;const title=item.title[lang]||item.title.en;
     el.innerHTML="<img src='"+item.img+"' alt='"+title+"' loading='lazy'><div class='cg-ov'></div><div class='cg-info'><span class='cg-cat'>"+cat+"</span><div class='cg-title'>"+title+"</div></div>";
-    el.onclick=()=>openLb(i);cg.appendChild(el);
+    el.onclick=()=>openLb(i);ss.appendChild(el);
   });
+  if(window.IntersectionObserver){
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add("in-focus");
+        }else{
+          e.target.classList.remove("in-focus");
+        }
+      });
+    },{rootMargin:"-40% 0px -40% 0px"});
+    setTimeout(()=>{
+      document.querySelectorAll(".showcase-item").forEach(i=>obs.observe(i));
+    },100);
+  }
   document.getElementById("tLbl").textContent=t.tstLabel;
   document.getElementById("tTtl").textContent=t.tstLabel;
   const tg=document.getElementById("tGrid");tg.innerHTML="";
