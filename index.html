@@ -263,12 +263,18 @@ footer{background:#fff;border-top:1px solid #e5e0d8;padding:22px 48px;display:fl
 <script>
 const GL="https://your-smart-gallery.vercel.app/login";
 const CT={email:"hello@photoambient.com",phone:"+1 (646) 836-4708",whatsapp:"+1 (646) 836-4708",location:"Philadelphia, PA"};
-const GAL=[
-  {img:"assets/portfolio/1.jpg",cat:{en:"Portrait",pt:"Retrato",es:"Retrato",fr:"Portrait"},title:{en:"Ballet",pt:"Ballet",es:"Ballet",fr:"Ballet"}},
-  {img:"assets/portfolio/2.jpg",cat:{en:"Performance",pt:"Espetáculo",es:"Espectáculo",fr:"Spectacle"},title:{en:"Recital",pt:"Recital",es:"Recital",fr:"Récital"}},
-  {img:"assets/portfolio/3.jpg",cat:{en:"Music",pt:"Música",es:"Música",fr:"Musique"},title:{en:"Piano",pt:"Piano",es:"Piano",fr:"Piano"}},
-  {img:"assets/portfolio/4.jpg",cat:{en:"Dance",pt:"Dança",es:"Danza",fr:"Danse"},title:{en:"Movement",pt:"Movimento",es:"Movimiento",fr:"Mouvement"}}
+const cats = [
+  {cat:{en:"Portrait",pt:"Retrato",es:"Retrato",fr:"Portrait"},title:{en:"Ballet",pt:"Ballet",es:"Ballet",fr:"Ballet"}},
+  {cat:{en:"Performance",pt:"Espetáculo",es:"Espectáculo",fr:"Spectacle"},title:{en:"Recital",pt:"Recital",es:"Recital",fr:"Récital"}},
+  {cat:{en:"Music",pt:"Música",es:"Música",fr:"Musique"},title:{en:"Piano",pt:"Piano",es:"Piano",fr:"Piano"}},
+  {cat:{en:"Dance",pt:"Dança",es:"Danza",fr:"Danse"},title:{en:"Movement",pt:"Movimento",es:"Movimiento",fr:"Mouvement"}},
+  {cat:{en:"Art",pt:"Arte",es:"Arte",fr:"Art"},title:{en:"Expression",pt:"Expressão",es:"Expresión",fr:"Expression"}},
+  {cat:{en:"Portrait",pt:"Retrato",es:"Retrato",fr:"Portrait"},title:{en:"Elegance",pt:"Elegância",es:"Elegancia",fr:"Élégance"}}
 ];
+const GAL = Array.from({length: 49}, (_, i) => ({
+  img: `assets/portfolio/${i + 1}.jpg`,
+  ...cats[i % cats.length]
+}));
 const TST=[
   {name:"Marina Oliveira",role:{en:"Brand Director",pt:"Diretora de Marca",es:"Directora de Marca",fr:"Directrice de Marque"},text:{en:"PhotoAmbient does not just take photos. They build visual worlds.",pt:"A PhotoAmbient nao apenas fotografa. Constroem mundos visuais.",es:"PhotoAmbient no solo toma fotos. Construyen mundos visuales.",fr:"PhotoAmbient ne fait pas que photographier."},img:"https://i.pravatar.cc/200?img=47"},
   {name:"Pedro Almeida",role:{en:"Creative Director",pt:"Diretor Criativo",es:"Director Creativo",fr:"Directeur Creatif"},text:{en:"The work they delivered changed how our brand is perceived globally.",pt:"O trabalho deles mudou como nossa marca e percebida globalmente.",es:"Su trabajo cambio como nuestra marca es percibida.",fr:"Leur travail a change la perception de notre marque."},img:"https://i.pravatar.cc/200?img=12"},
