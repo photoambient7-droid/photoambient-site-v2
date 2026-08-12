@@ -148,10 +148,9 @@ footer{background:#fff;border-top:1px solid #e5e0d8;padding:22px 48px;display:fl
   .langbar{padding:0 24px}
 }
 .showcase-stack{display:flex;flex-direction:column;align-items:center;gap:15vh;padding:10vh 20px;width:100%;max-width:900px;margin:0 auto}
-.showcase-item{width:100%;height:80vh;position:relative;border-radius:24px;overflow:hidden;will-change:transform,opacity,filter;transform:scale(0.85);opacity:0.4;filter:blur(10px);transition:transform 0.8s cubic-bezier(0.2,0.8,0.2,1),opacity 0.8s cubic-bezier(0.2,0.8,0.2,1),filter 0.8s cubic-bezier(0.2,0.8,0.2,1);box-shadow:0 20px 40px rgba(0,0,0,0.4);cursor:pointer}
+.showcase-item{width:100%;height:80vh;position:relative;border-radius:24px;overflow:hidden;will-change:transform,opacity,filter;transform:scale(0.85);opacity:0.4;filter:blur(10px);box-shadow:0 20px 40px rgba(0,0,0,0.4);cursor:pointer}
 .showcase-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease}
 .showcase-item:hover img{transform:scale(1.03)}
-.showcase-item.in-focus{transform:scale(1);opacity:1;filter:blur(0px)}
 @media (max-width:768px){.showcase-item{height:60vh;border-radius:16px}}
 </style>
 </head>
@@ -380,20 +379,38 @@ function renderAll(){
     el.innerHTML="<img src='"+item.img+"' alt='"+title+"' loading='lazy'><div class='cg-ov'></div><div class='cg-info'><span class='cg-cat'>"+cat+"</span><div class='cg-title'>"+title+"</div></div>";
     el.onclick=()=>openLb(i);ss.appendChild(el);
   });
-  if(window.IntersectionObserver){
-    const obs=new IntersectionObserver(entries=>{
-      entries.forEach(e=>{
-        if(e.isIntersecting){
-          e.target.classList.add("in-focus");
-        }else{
-          e.target.classList.remove("in-focus");
-        }
-      });
-    },{rootMargin:"-40% 0px -40% 0px"});
-    setTimeout(()=>{
-      document.querySelectorAll(".showcase-item").forEach(i=>obs.observe(i));
-    },100);
-  }
+  // Continuous Scroll Animation for Showcase 12
+  const updateShowcase = () => {
+    const items = document.querySelectorAll(".showcase-item");
+    const vh = window.innerHeight;
+    const centerY = vh / 2;
+    
+    items.forEach(item => {
+      const rect = item.getBoundingClientRect();
+      const itemCenter = rect.top + rect.height / 2;
+      
+      // Calculate distance from center (0 = perfectly centered)
+      let dist = Math.abs(centerY - itemCenter);
+      // Normalize distance based on viewport height
+      let ratio = dist / (vh * 0.8);
+      if (ratio > 1) ratio = 1; // Cap at 1
+      
+      // Map ratio to styles
+      const scale = 1 - (ratio * 0.15); // 1 to 0.85
+      const blur = ratio * 15;          // 0px to 15px
+      const opacity = 1 - (ratio * 0.7); // 1 to 0.3
+      
+      item.style.transform = `scale(${scale})`;
+      item.style.filter = `blur(${blur}px)`;
+      item.style.opacity = opacity;
+    });
+  };
+  
+  window.removeEventListener("scroll", window._showcaseScrollHandler);
+  window._showcaseScrollHandler = () => requestAnimationFrame(updateShowcase);
+  window.addEventListener("scroll", window._showcaseScrollHandler, {passive:true});
+  
+  setTimeout(updateShowcase, 100);
   document.getElementById("tLbl").textContent=t.tstLabel;
   document.getElementById("tTtl").textContent=t.tstLabel;
   const tg=document.getElementById("tGrid");tg.innerHTML="";
