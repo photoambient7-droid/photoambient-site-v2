@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PhotoAmbient — Visual Studio</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Syne:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -214,8 +215,16 @@ footer{background:#fff;border-top:1px solid #e5e0d8;padding:22px 48px;display:fl
 
 <div class="cl-banner"><span id="clBanLbl"></span><a href="#" id="clBanLnk"></a></div>
 
-<section id="work">
-  <!-- Espaço reservado para o seu novo código do OriginKit -->
+<section id="work" style="position:relative; width:100%; height:85vh; min-height:550px; background:#000; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+  <!-- Canvas do Túnel 3D do OriginKit (O túnel passando por trás) -->
+  <div id="tunnelContainer" style="position:absolute; inset:0; z-index:1; cursor:grab;"></div>
+  
+  <!-- Overlay central com a logo do Camaleão e o nome Photoambient por cima -->
+  <div style="position:absolute; bottom:40px; left:50%; transform:translateX(-50%); z-index:10; display:flex; flex-direction:column; align-items:center; text-align:center; pointer-events:none; backdrop-filter:blur(10px); background:rgba(0,0,0,0.55); padding:18px 36px; border-radius:24px; border:1px solid rgba(255,255,255,0.18); box-shadow:0 20px 50px rgba(0,0,0,0.7);">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAk8AAAJPCAYAAABlxzBuAAEAAElEQVR42uz9edhtyXXWCf5WxN77DN9457w5z6lMSZkardG2bMtCNgUuMzQFxgaXDRiwoZmnp6iCggIeN93V3UC1gcKFmwcbG2hoqhnKxniQB+RBsmVZsmWhVKZyVN75+845e++IWP1HxN5nn/N9NzOV92bevPfGq+fo3PzOvHfsiDfetda7ICMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjI+NlQ/Ih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" style="height:60px; width:auto; margin-bottom:8px;">
+    <span style="font-family:'Syne',sans-serif; font-size:18px; font-weight:800; letter-spacing:0.25em; text-transform:uppercase; color:#ffffff;">PHOTOAMBIENT</span>
+    <span style="font-family:'Syne',sans-serif; font-size:9px; font-weight:500; letter-spacing:0.3em; text-transform:uppercase; color:rgba(255,255,255,0.6); margin-top:4px;">VISUAL STUDIO</span>
+  </div>
 </section>
 
 <section id="testimonials">
@@ -450,6 +459,215 @@ document.documentElement.lang=lang;
 buildMarquee();
 buildHero();
 renderAll();
+
+function initTunnel() {
+  const frame = document.getElementById("tunnelContainer");
+  if (!frame || !window.THREE) return;
+
+  const scene = new THREE.Scene();
+  const background = "#000000";
+  scene.background = new THREE.Color(background);
+
+  const NUM_SEGMENTS = 15;
+  const SEGMENT_DEPTH = 1;
+  const FOG_FAR = NUM_SEGMENTS * SEGMENT_DEPTH * 0.95;
+  scene.fog = new THREE.Fog(new THREE.Color(background), FOG_FAR * 0.05, FOG_FAR);
+
+  const camera = new THREE.PerspectiveCamera(45, frame.clientWidth / frame.clientHeight, 1, 1000);
+  camera.position.set(0, 0, 0);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(frame.clientWidth, frame.clientHeight);
+  frame.appendChild(renderer.domElement);
+
+  const lineMaterial = new THREE.MeshBasicMaterial({
+    color: new THREE.Color("#B0B0B0"),
+    transparent: true,
+    opacity: 0.54,
+  });
+
+  const loader = new THREE.TextureLoader();
+  loader.setCrossOrigin("anonymous");
+
+  const portfolioImages = [];
+  for (let i = 1; i <= 49; i++) {
+    portfolioImages.push(`assets/portfolio/${i}.jpg`);
+  }
+
+  const palette = ["#FF6A00", "#AB54F7", "#EA3737", "#0072E3", "#00AA3C", "#FFB200"].map(hex => new THREE.Color(hex));
+  const colorMats = palette.map(c => new THREE.MeshBasicMaterial({ color: c, side: THREE.DoubleSide }));
+  
+  const fading = [];
+  const imageMats = portfolioImages.map(url => {
+    const mat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, side: THREE.DoubleSide });
+    loader.load(url, tex => {
+      tex.minFilter = THREE.LinearFilter;
+      tex.generateMipmaps = false;
+      tex.colorSpace = THREE.SRGBColorSpace;
+      mat.map = tex;
+      mat.needsUpdate = true;
+      fading.push(mat);
+    });
+    return mat;
+  });
+
+  const TUNNEL_WIDTH = 2;
+  const TUNNEL_HEIGHT = 1.8;
+  const hw = TUNNEL_WIDTH / 2;
+  const hh = TUNNEL_HEIGHT / 2;
+
+  const cols = 4;
+  const rows = 4;
+  const colW = TUNNEL_WIDTH / cols;
+  const rowH = TUNNEL_HEIGHT / rows;
+
+  const geoFloor = new THREE.PlaneGeometry(colW, SEGMENT_DEPTH);
+  const geoWall = new THREE.PlaneGeometry(SEGMENT_DEPTH, rowH);
+
+  const LINE_RADIUS = 0.003;
+  const geoTubeZ = new THREE.TubeGeometry(new THREE.LineCurve3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -SEGMENT_DEPTH)), 1, LINE_RADIUS, 8);
+  const geoTubeX = new THREE.TubeGeometry(new THREE.LineCurve3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(TUNNEL_WIDTH, 0, 0)), 1, LINE_RADIUS, 8);
+  const geoTubeY = new THREE.TubeGeometry(new THREE.LineCurve3(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, TUNNEL_HEIGHT, 0)), 1, LINE_RADIUS, 8);
+
+  const tube = (geo, x, y, z = 0) => {
+    const m = new THREE.Mesh(geo, lineMaterial);
+    m.position.set(x, y, z);
+    return m;
+  };
+
+  const SLOTS = [];
+  const zSlot = -SEGMENT_DEPTH / 2;
+  for (let i = 0; i < cols; i++) {
+    const x = -hw + i * colW + colW / 2;
+    SLOTS.push({ geo: geoFloor, pos: new THREE.Vector3(x, -hh, zSlot), rot: new THREE.Euler(-Math.PI / 2, 0, 0) });
+    SLOTS.push({ geo: geoFloor, pos: new THREE.Vector3(x, hh, zSlot), rot: new THREE.Euler(Math.PI / 2, 0, 0) });
+  }
+  for (let i = 0; i < rows; i++) {
+    const y = -hh + i * rowH + rowH / 2;
+    SLOTS.push({ geo: geoWall, pos: new THREE.Vector3(-hw, y, zSlot), rot: new THREE.Euler(0, Math.PI / 2, 0) });
+    SLOTS.push({ geo: geoWall, pos: new THREE.Vector3(hw, y, zSlot), rot: new THREE.Euler(0, -Math.PI / 2, 0) });
+  }
+
+  let populateIndex = 0;
+  let imageIndex = 0;
+  let colorIndex = 0;
+
+  function populate(group) {
+    const takesSlabs = populateIndex % 2 === 0;
+    populateIndex++;
+    const slabs = group.userData.slabs;
+
+    for (const slab of slabs) {
+      if (!takesSlabs || Math.random() > 0.5) {
+        slab.visible = false;
+        continue;
+      }
+      slab.visible = true;
+      if (Math.random() > 0.5) {
+        slab.material = colorMats[(5 * colorIndex) % colorMats.length];
+        colorIndex++;
+      } else {
+        slab.material = imageMats[(3 * imageIndex) % imageMats.length];
+        imageIndex++;
+      }
+    }
+  }
+
+  function createSegment(z) {
+    const group = new THREE.Group();
+    group.position.z = z;
+
+    for (let i = 0; i <= cols; i++) {
+      const x = -hw + i * colW;
+      group.add(tube(geoTubeZ, x, -hh));
+      group.add(tube(geoTubeZ, x, hh));
+    }
+    for (let i = 1; i < rows; i++) {
+      const y = -hh + i * rowH;
+      group.add(tube(geoTubeZ, -hw, y));
+      group.add(tube(geoTubeZ, hw, y));
+    }
+    group.add(tube(geoTubeX, -hw, -hh));
+    group.add(tube(geoTubeX, -hw, hh));
+    group.add(tube(geoTubeY, -hw, -hh));
+    group.add(tube(geoTubeY, hw, -hh));
+
+    const slabs = SLOTS.map(slot => {
+      const m = new THREE.Mesh(slot.geo, colorMats[0]);
+      m.position.copy(slot.pos);
+      m.rotation.copy(slot.rot);
+      m.visible = false;
+      group.add(m);
+      return m;
+    });
+    group.userData.slabs = slabs;
+
+    populate(group);
+    return group;
+  }
+
+  const segments = [];
+  for (let i = 0; i < NUM_SEGMENTS; i++) {
+    const g = createSegment(-i * SEGMENT_DEPTH);
+    scene.add(g);
+    segments.push(g);
+  }
+
+  let scrollPos = 0;
+  let pressed = false;
+
+  frame.addEventListener("pointerdown", () => pressed = true);
+  window.addEventListener("pointerup", () => pressed = false);
+
+  const resize = () => {
+    const w = frame.clientWidth;
+    const h = frame.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  };
+  window.addEventListener("resize", resize);
+
+  let last = 0;
+  const animate = (now) => {
+    requestAnimationFrame(animate);
+    const dt = last ? Math.min((now - last) / 1000, 1 / 30) : 1 / 60;
+    last = now;
+
+    scrollPos += pressed ? 10 : 1.5;
+
+    const want = -0.05 * scrollPos;
+    camera.position.z += 0.1 * (want - camera.position.z);
+
+    const span = NUM_SEGMENTS * SEGMENT_DEPTH;
+    const z = camera.position.z;
+    for (const seg of segments) {
+      if (seg.position.z > z + SEGMENT_DEPTH) {
+        let min = 0;
+        for (const s of segments) min = Math.min(min, s.position.z);
+        seg.position.z = min - SEGMENT_DEPTH;
+        populate(seg);
+      } else if (seg.position.z < z - span - SEGMENT_DEPTH) {
+        let max = -999999;
+        for (const s of segments) max = Math.max(max, s.position.z);
+        seg.position.z = max + SEGMENT_DEPTH;
+        populate(seg);
+      }
+    }
+
+    for (let i = fading.length - 1; i >= 0; i--) {
+      const m = fading[i];
+      m.opacity = Math.min(1, m.opacity + dt / 1);
+      if (m.opacity >= 1) fading.splice(i, 1);
+    }
+
+    renderer.render(scene, camera);
+  };
+  requestAnimationFrame(animate);
+}
+
+setTimeout(initTunnel, 200);
 </script>
 </body>
 </html>
